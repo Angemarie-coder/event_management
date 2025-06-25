@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, CheckCircle } from "lucide-react"
+import api from "@/lib/axios"
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -42,26 +43,20 @@ export default function RegisterForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-        }),
+      await api.post('/api/auth/register', {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        password: formData.password,
+        role: "user" // Default role for regular users
       })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setSuccess(true)
+      
+      setSuccess(true)
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        setError(error.response.data.message)
       } else {
-        setError(data.error || "Registration failed")
+        setError("An error occurred. Please try again.")
       }
-    } catch (error) {
-      setError("An error occurred. Please try again.")
     } finally {
       setLoading(false)
     }

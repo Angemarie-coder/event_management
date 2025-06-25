@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Eye, EyeOff } from "lucide-react"
+import api from "@/lib/axios"
 
 export default function LoginForm() {
   const [email, setEmail] = useState("")
@@ -20,40 +21,52 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  // Pre-fill with demo account for testing
-  const fillDemoAccount = (role: "user" | "admin" | "super_admin") => {
-    const accounts = {
-      user: { email: "user@eventmanager.com", password: "password123" },
-      admin: { email: "admin@eventmanager.com", password: "password123" },
-      super_admin: { email: "superadmin@eventmanager.com", password: "password123" },
-    }
-
-    setEmail(accounts[role].email)
-    setPassword(accounts[role].password)
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setLoading(true)
 
+    console.log('Attempting login with:', { email, password: '***' })
+    console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000")
+
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const response = await api.post('http://localhost:5000/api/auth/login', {
+        email,
+        password
       })
 
-      const data = await response.json()
+      console.log('Login response:', response.data)
 
-      if (response.ok) {
-        router.push("/dashboard")
-        router.refresh()
-      } else {
-        setError(data.error || "Login failed")
+      const { token, user } = response.data
+
+      // Store the JWT token for authentication
+      if (token) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        console.log('Token stored successfully')
       }
-    } catch (error) {
-      setError("An error occurred. Please try again.")
+      
+      // Redirect based on role
+      if (user.role === "super-admin") {
+        router.push("/dashboard/super-admin");
+      } else if (user.role === "admin") {
+        router.push("/dashboard/admin");
+      } else {
+        router.push("/dashboard");
+      }
+      router.refresh()
+    } catch (error: any) {
+      console.error('Login error:', error)
+      console.error('Error response:', error.response)
+      console.error('Error message:', error.message)
+      
+      if (error.response?.data?.message) {
+        setError(error.response.data.message)
+      } else if (error.message) {
+        setError(error.message)
+      } else {
+        setError("An error occurred. Please try again.")
+      }
     } finally {
       setLoading(false)
     }
@@ -66,40 +79,7 @@ export default function LoginForm() {
         <CardDescription>Enter your credentials to access your account</CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Demo Account Buttons */}
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm font-medium text-blue-900 mb-3">Demo Accounts (Click to auto-fill):</p>
-          <div className="grid grid-cols-1 gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => fillDemoAccount("user")}
-              className="text-xs"
-            >
-              👤 User Account
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => fillDemoAccount("admin")}
-              className="text-xs"
-            >
-              🛠️ Admin Account
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => fillDemoAccount("super_admin")}
-              className="text-xs"
-            >
-              👑 Super Admin Account
-            </Button>
-          </div>
-        </div>
-
+       
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <Alert variant="destructive">

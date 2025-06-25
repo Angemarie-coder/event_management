@@ -1,3 +1,4 @@
+
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -426,7 +427,7 @@ export default function HomePage() {
       </footer>
 
 
-      {/* Scroll to top button */}
+      {/* Scroll to top button*/}
       <button className="fixed bottom-8 right-8 p-3 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 rounded-full transition-colors z-20">
         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
