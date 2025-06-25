@@ -1,3 +1,4 @@
+import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
@@ -6,7 +7,9 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Event Manager - Complete Event Management System",
-  description: "A comprehensive event management system with role-based access control, event creation, booking management, and admin approval workflows.",
+  description:
+    "A comprehensive event management system with role-based access control, booking management, and automated notifications.",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -19,4 +22,4 @@ export default function RootLayout({
       <body className={inter.className}>{children}</body>
     </html>
   )
-} 
+}
