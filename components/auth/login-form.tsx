@@ -50,7 +50,7 @@ export default function LoginForm() {
       if (user.role === "super-admin") {
         router.push("/dashboard/super-admin");
       } else if (user.role === "admin") {
-        router.push("/dashboard/admin");
+        router.push("/dashboard/admins");
       } else {
         router.push("/dashboard");
       }
@@ -124,7 +124,8 @@ export default function LoginForm() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white px-8 py-4 text-lg rounded-full"
+               disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign In
           </Button>
