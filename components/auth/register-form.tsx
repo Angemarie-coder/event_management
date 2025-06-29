@@ -134,6 +134,7 @@ export default function RegisterForm() {
               onChange={handleChange}
               required
               disabled={loading}
+              
             />
           </div>
 
