@@ -69,7 +69,7 @@ export default function HomePage() {
                 Start Managing Events
               </Button>
             </Link>
-            <Link href="/events">
+            <Link href="/login">
               <Button
                 variant="outline"
                 size="lg"
@@ -308,7 +308,7 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/events" className="text-gray-300 hover:text-pink-400 transition-colors text-sm">
+                  <Link href="/login" className="text-gray-300 hover:text-pink-400 transition-colors text-sm">
                     Browse Events
                   </Link>
                 </li>

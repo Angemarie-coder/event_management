@@ -1,16 +1,15 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, CheckCircle } from "lucide-react"
-import api from "@/lib/axios"
+import type React from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, CheckCircle } from "lucide-react";
+import api from "@/lib/axios";
 
 export default function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -19,27 +18,29 @@ export default function RegisterForm() {
     email: "",
     password: "",
     confirmPassword: "",
-  })
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
+    role: "user",  // default role
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
-    setLoading(true)
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      setLoading(false)
-      return
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
     }
 
     try {
@@ -47,20 +48,20 @@ export default function RegisterForm() {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         password: formData.password,
-        role: "user" // Default role for regular users
-      })
-      
-      setSuccess(true)
+        role: formData.role, // send selected role here
+      });
+
+      setSuccess(true);
     } catch (error: any) {
       if (error.response?.data?.message) {
-        setError(error.response.data.message)
+        setError(error.response.data.message);
       } else {
-        setError("An error occurred. Please try again.")
+        setError("An error occurred. Please try again.");
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (success) {
     return (
@@ -76,12 +77,12 @@ export default function RegisterForm() {
               </p>
             </div>
             <Link href="/login">
-              <Button className="w-full">Go to Login</Button>
+              <Button className="w-full bg-pink-700">Go to Login</Button>
             </Link>
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -137,6 +138,21 @@ export default function RegisterForm() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="role">Register As</Label>
+            <select
+              id="role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              disabled={loading}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -162,8 +178,11 @@ export default function RegisterForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white px-8 py-4 text-lg rounded-full"
-               disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white px-8 py-4 text-lg rounded-full"
+            disabled={loading}
+          >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Account
           </Button>
@@ -177,5 +196,5 @@ export default function RegisterForm() {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }

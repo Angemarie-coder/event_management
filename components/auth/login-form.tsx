@@ -51,9 +51,9 @@ export default function LoginForm() {
         router.push("/dashboard/super-admin");
       } else if (user.role === "admin") {
         router.push("/dashboard/admins");
-      } else {
-        router.push("/dashboard");
-      }
+      } else if (user.role === "user") {
+        router.push("/users/dashboard");  
+      } 
       router.refresh()
     } catch (error: any) {
       console.error('Login error:', error)
