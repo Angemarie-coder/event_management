@@ -300,7 +300,7 @@ export default function AdminManagement() {
           <h1 className="text-3xl font-bold">Admin Registrations</h1>
           <p className="text-muted-foreground">Review and manage admin registration requests</p>
         </div>
-        <Button onClick={fetchAdmins} disabled={loading}>
+        <Button onClick={fetchAdmins} disabled={loading} className="bg-pink-700 text-white">
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
           Refresh
         </Button>
