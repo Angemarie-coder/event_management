@@ -1,10 +1,61 @@
+"use client";
 
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Calendar, Menu } from "lucide-react"
+import { useEffect, useState } from "react"
+import EventCard from "@/components/user/eventcard"
+import axios from "@/lib/axios"
+
+interface Event {
+  id: number;
+  title: string;
+  description: string;
+  location: string;
+  date: string;
+  availableSeats: number;
+  totalSeats: number;
+  createdBy?: {
+    id: number;
+    name: string;
+    email: string;
+  };
+}
 
 export default function HomePage() {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token);
+
+    const fetchEvents = async () => {
+      try {
+        console.log('Fetching events from:', 'http://localhost:5000/api/events/public');
+        const response = await axios.get('http://localhost:5000/api/events/public');
+        console.log('Events response:', response.data);
+        console.log('Events array length:', response.data.length);
+        console.log('Events array:', JSON.stringify(response.data, null, 2));
+        setEvents(response.data);
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  // Debug events state changes
+  useEffect(() => {
+    console.log('Events state changed:', events);
+    console.log('Events length in state:', events.length);
+  }, [events]);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Background decorative elements */}
@@ -33,11 +84,6 @@ export default function HomePage() {
                   Sign In
                 </Button>
               </Link>
-              <Link href="/register">
-                <Button className="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white">
-                  Get Started
-                </Button>
-              </Link>
             </div>
             <button className="md:hidden">
               <Menu className="w-6 h-6 text-white" />
@@ -60,25 +106,35 @@ export default function HomePage() {
             A comprehensive event management system with role-based access control, booking management, and automated
             email notifications.
           </p>
-          <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/register">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white px-8 py-4 text-lg rounded-full"
-              >
-                Start Managing Events
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-gray-600 text-gray-300 hover:text-white hover:border-pink-500 px-8 py-4 text-lg rounded-full"
-              >
-                Browse Events
-              </Button>
-            </Link>
+        </div>
+
+        {/* Available Events Section */}
+        <div className="mt-32">
+          <div className="text-center mb-16">
+            <h3 className="text-4xl font-bold text-white mb-4">Available Events</h3>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              Browse and book tickets for exciting events. No account required!
+            </p>
           </div>
+
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto"></div>
+              <p className="text-gray-300 mt-4">Loading events...</p>
+            </div>
+          ) : events.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-300 text-lg">No events available at the moment.</p>
+              <p className="text-gray-400 mt-2">Check back later for new events!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {events.map((event) => (
+                <EventCard key={event.id} event={event} isLandingPage={true} />
+              ))}
+            </div>
+          )}
+
         </div>
 
         {/* Event Gallery Section */}
@@ -392,8 +448,8 @@ export default function HomePage() {
                 <h5 className="text-sm font-semibold text-white mb-2">Contact Info</h5>
                 <div className="space-y-1 text-sm text-gray-300">
                   <p>📧 support@eventmanager.com</p>
-                  <p>📞 +1 (555) 123-4567</p>
-                  <p>📍 123 Event Street, City, State 12345</p>
+                  <p>📞0786298442</p>
+                  <p>📍 123 Event Street,kigali City </p>
                 </div>
               </div>
             </div>

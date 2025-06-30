@@ -64,7 +64,7 @@ export default function AddEventPage() {
           <Label htmlFor="totalSeats">Total Seats</Label>
           <Input id="totalSeats" name="totalSeats" type="number" min={1} value={form.totalSeats} onChange={handleChange} required disabled={loading} />
         </div>
-        <Button type="submit" className="w-full bg-pink-700 hover:bg-pink-800 text-white" disabled={loading} >
+        <Button type="submit" className="w-full bg-gray-700 hover:bg-gray-800 text-white" disabled={loading} >
           {loading ? "Adding..." : "Add Event"}
         </Button>
       </form>

@@ -52,7 +52,7 @@ export default function LoginForm() {
       } else if (user.role === "admin") {
         router.push("/dashboard/admins");
       } else if (user.role === "user") {
-        router.push("/users/dashboard");  
+        router.push("/book");  
       } 
       router.refresh()
     } catch (error: any) {

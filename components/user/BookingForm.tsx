@@ -10,7 +10,7 @@ export default function BookingForm({ eventId }: { eventId: number }) {
 
   const handleBooking = async () => {
     try {
-      await api.post(" http://localhost:5000/api/bookings", { eventId, quantity, message });
+      await api.post(" http://localhost:5000/api/bookings", { eventId, seatCount: quantity, message });
       alert("Booking request sent!");
     } catch (error) {
       alert("Failed to book ticket.");

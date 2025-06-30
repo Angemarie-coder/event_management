@@ -6,7 +6,7 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Event Manager - Complete Event Management System",
+  title: "Event Manager",
   description:
     "A comprehensive event management system with role-based access control, booking management, and automated notifications.",
     generator: 'v0.dev'

@@ -73,9 +73,13 @@ export default function AdminManagement() {
       setAdmins(data)
     } catch (error) {
       console.error("Fetch error:", error)
+      let errorMessage = "Failed to fetch admin registrations"
+      if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage
+      }
       toast({
         title: "Error",
-        description: "Failed to fetch admin registrations",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -151,9 +155,13 @@ export default function AdminManagement() {
       })
     } catch (error) {
       console.error("Reject error:", error)
+      let errorMessage = "Failed to reject admin registration"
+      if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage
+      }
       toast({
         title: "Error",
-        description: `Failed to reject admin registration: ${error.message}`,
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -230,9 +238,13 @@ export default function AdminManagement() {
       })
     } catch (error) {
       console.error("Approve error:", error)
+      let errorMessage = "Failed to approve admin registration"
+      if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage
+      }
       toast({
         title: "Error",
-        description: `Failed to approve admin registration: ${error.message}`,
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -293,21 +305,17 @@ export default function AdminManagement() {
   // rejectedCount is now from state
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-2 sm:p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Admin Registrations</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Admin Registrations</h1>
           <p className="text-muted-foreground">Review and manage admin registration requests</p>
         </div>
-        <Button onClick={fetchAdmins} disabled={loading}  className="bg-pink-700 text-white">
-          <RefreshCw className={`h-4 w-4 mr-2  ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
@@ -373,89 +381,91 @@ export default function AdminManagement() {
               {searchTerm ? "No admins found matching your search." : "No admin registrations found."}
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Admin Details</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Registered</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAdmins.map((admin) => (
-                  <TableRow key={admin.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="/placeholder.svg" />
-                          <AvatarFallback>
-                            {admin.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium">{admin.name}</div>
-                          <div className="text-sm text-muted-foreground">{admin.email}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{admin.email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="capitalize">
-                        {admin.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{formatDate(admin.createdAt)}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(admin.isApproved)} variant="outline">
-                        {getStatusText(admin.isApproved)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {!admin.isApproved ? (
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRejectAdmin(admin.id)}
-                            disabled={actionLoading === admin.id}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                          >
-                            <X className="h-4 w-4 mr-1" />
-                            Reject
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => handleAcceptAdmin(admin.id)}
-                            disabled={actionLoading === admin.id}
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                          >
-                            {actionLoading === admin.id ? (
-                              <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-                            ) : (
-                              <Check className="h-4 w-4 mr-1" />
-                            )}
-                            Accept
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="text-sm text-green-600 font-medium">✓ Approved</div>
-                      )}
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Admin Details</TableHead>
+                    <TableHead>Contact</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Registered</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filteredAdmins.map((admin) => (
+                    <TableRow key={admin.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src="/placeholder.svg" />
+                            <AvatarFallback>
+                              {admin.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium">{admin.name}</div>
+                            <div className="text-sm text-muted-foreground">{admin.email}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div>{admin.email}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize">
+                          {admin.role}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{formatDate(admin.createdAt)}</TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(admin.isApproved)} variant="outline">
+                          {getStatusText(admin.isApproved)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {!admin.isApproved ? (
+                          <div className="flex gap-2 justify-end">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleRejectAdmin(admin.id)}
+                              disabled={actionLoading === admin.id}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                            >
+                              <X className="h-4 w-4 mr-1" />
+                              Reject
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={() => handleAcceptAdmin(admin.id)}
+                              disabled={actionLoading === admin.id}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              {actionLoading === admin.id ? (
+                                <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
+                              ) : (
+                                <Check className="h-4 w-4 mr-1" />
+                              )}
+                              Accept
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="text-sm text-green-600 font-medium">✓ Approved</div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

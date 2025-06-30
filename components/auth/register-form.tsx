@@ -18,7 +18,6 @@ export default function RegisterForm() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",  // default role
   });
 
   const [error, setError] = useState("");
@@ -48,7 +47,6 @@ export default function RegisterForm() {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         password: formData.password,
-        role: formData.role, // send selected role here
       });
 
       setSuccess(true);
@@ -70,10 +68,9 @@ export default function RegisterForm() {
           <div className="text-center space-y-4">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
             <div>
-              <h3 className="text-lg font-semibold">Registration Successful!</h3>
+              <h3 className="text-lg font-semibold">Admin Registration Submitted!</h3>
               <p className="text-sm text-muted-foreground mt-2">
-                Thank you for signing up. Your account is pending approval from an administrator. You will receive an
-                email once your account has been approved.
+                Thank you for registering as an admin! Please check your email to verify your account. After email verification, your account will be reviewed by a super administrator for approval.
               </p>
             </div>
             <Link href="/login">
@@ -88,8 +85,10 @@ export default function RegisterForm() {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Create Account</CardTitle>
-        <CardDescription>Sign up for Event Manager to start booking events</CardDescription>
+        <CardTitle>Admin Registration</CardTitle>
+        <CardDescription>
+          Register as an event organizer. You'll need to verify your email and get approval from a super administrator.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -134,23 +133,7 @@ export default function RegisterForm() {
               onChange={handleChange}
               required
               disabled={loading}
-              
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="role">Register As</Label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              disabled={loading}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
-            >
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-            </select>
           </div>
 
           <div className="space-y-2">
@@ -185,7 +168,7 @@ export default function RegisterForm() {
             disabled={loading}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Create Account
+            Register as Admin
           </Button>
 
           <div className="text-center text-sm">

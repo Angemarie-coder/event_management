@@ -48,32 +48,24 @@ export default function AddAdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 p-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 px-2 py-8">
+      <div className="w-full max-w-xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div
-            className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-            style={{ background: "linear-gradient(135deg, #ea6089, #f472b6)" }}
-          >
-            <UserPlus className="h-8 w-8 text-white" />
+        <div className="flex flex-col items-center mb-8">
+          <div className="bg-gray-200 shadow-lg rounded-full p-4 mb-4">
+            <UserPlus className="h-10 w-10 text-gray-900 drop-shadow" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Admin</h1>
-          <p className="text-gray-600">Create a new administrator account for the system</p>
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-1 tracking-tight">Add Admin</h1>
+          <p className="text-base text-gray-500">Create a new administrator account for the system</p>
         </div>
 
         {/* Form Card */}
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader
-            className="text-white rounded-t-lg"
-            style={{ background: "linear-gradient(135deg, #ea6089, #f472b6)" }}
-          >
-            <CardTitle className="text-xl font-semibold flex items-center gap-2">
-              <Shield className="h-5 w-5" />
-              Administrator Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-8">
+        <div className="rounded-3xl shadow-2xl bg-white/70 backdrop-blur-md border border-gray-200">
+          <div className="rounded-t-3xl px-8 py-5 bg-white flex items-center gap-3 border-b border-gray-100">
+            <Shield className="h-6 w-6 text-gray-900" />
+            <span className="text-lg font-semibold text-gray-900 tracking-wide">Admin Details</span>
+          </div>
+          <div className="px-8 py-8">
             {/* Success Alert */}
             {success && (
               <Alert className="mb-6 border-green-200 bg-green-50">
@@ -92,9 +84,9 @@ export default function AddAdminPage() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Field */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="name" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <User className="h-4 w-4" style={{ color: "#ea6089" }} />
+                  <User className="h-4 w-4 text-gray-900" />
                   Full Name
                 </Label>
                 <Input
@@ -105,14 +97,14 @@ export default function AddAdminPage() {
                   required
                   disabled={loading}
                   placeholder="Enter full name"
-                  className="h-12 border-gray-200 transition-colors focus:border-[#ea6089] focus:ring-[#ea6089]"
+                  className="h-12 rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-200 bg-white/80"
                 />
               </div>
 
               {/* Email Field */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Mail className="h-4 w-4" style={{ color: "#ea6089" }} />
+                  <Mail className="h-4 w-4 text-gray-900" />
                   Email Address
                 </Label>
                 <Input
@@ -124,14 +116,14 @@ export default function AddAdminPage() {
                   required
                   disabled={loading}
                   placeholder="Enter email address"
-                  className="h-12 border-gray-200 transition-colors focus:border-[#ea6089] focus:ring-[#ea6089]"
+                  className="h-12 rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-200 bg-white/80"
                 />
               </div>
 
               {/* Password Field */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Lock className="h-4 w-4" style={{ color: "#ea6089" }} />
+                  <Lock className="h-4 w-4 text-gray-900" />
                   Password
                 </Label>
                 <Input
@@ -143,38 +135,33 @@ export default function AddAdminPage() {
                   required
                   disabled={loading}
                   placeholder="Enter secure password"
-                  className="h-12 border-gray-200 transition-colors focus:border-[#ea6089] focus:ring-[#ea6089]"
+                  className="h-12 rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-200 bg-white/80"
                 />
-                <p className="text-xs text-gray-500">Password should be at least 8 characters long</p>
+                <p className="text-xs text-gray-400 ml-1">Password should be at least 8 characters long</p>
               </div>
 
               {/* Role Field */}
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Shield className="h-4 w-4" style={{ color: "#ea6089" }} />
+                  <Shield className="h-4 w-4 text-gray-900" />
                   Role
                 </Label>
                 <Select value={form.role} onValueChange={handleRoleChange} disabled={loading}>
-                  <SelectTrigger className="h-12 border-gray-200 focus:border-[#ea6089] focus:ring-[#ea6089]">
+                  <SelectTrigger className="h-12 rounded-xl border-gray-200 focus:border-gray-900 focus:ring-gray-200 bg-white/80">
                     <SelectValue placeholder="Select role" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="admin">Administrator</SelectItem>
                     <SelectItem value="super-admin">Super Administrator</SelectItem>
-                    <SelectItem value="moderator">Moderator</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Submit Button */}
-              <div className="pt-4">
+              <div className="pt-2">
                 <Button
                   type="submit"
-                  className="w-full h-12 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
-                  style={{
-                    background: "linear-gradient(135deg, #ea6089, #f472b6)",
-                    ":hover": { background: "linear-gradient(135deg, #d946a0, #ea6089)" },
-                  }}
+                  className="w-full h-12 text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-200 transform hover:scale-[1.03] bg-gray-900 focus:ring-2 focus:ring-gray-200 focus:outline-none"
                   disabled={loading}
                 >
                   {loading ? (
@@ -185,42 +172,23 @@ export default function AddAdminPage() {
                   ) : (
                     <div className="flex items-center gap-2">
                       <UserPlus className="h-5 w-5" />
-                      Add Administrator
+                      Add Admin
                     </div>
                   )}
                 </Button>
               </div>
             </form>
-
-            {/* Info Box */}
-            <div className="mt-8 p-4 rounded-lg border" style={{ backgroundColor: "#fdf2f8", borderColor: "#f9a8d4" }}>
-              <div className="flex items-start gap-3">
-                <div
-                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ backgroundColor: "#ea6089" }}
-                >
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div className="text-sm" style={{ color: "#831843" }}>
-                  <p className="font-medium mb-1">Important Note:</p>
-                  <p>
-                    New admin accounts require approval from a Super Administrator before they can access the system.
-                    The admin will receive an email notification once their account is approved.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Additional Actions */}
         <div className="mt-6 text-center">
           <Button
             variant="outline"
-            className="border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl px-6 py-2"
             onClick={() => window.history.back()}
           >
-            ← Back to Admin Management
+            ← Back
           </Button>
         </div>
       </div>

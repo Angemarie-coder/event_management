@@ -1,7 +1,10 @@
 "use client"
 
-import type * as React from "react"
+import React from "react"
 import { Users, Calendar, BookOpen, UserPlus, CheckCircle, Plus, LogOut, User, Settings } from "lucide-react"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import api from "@/lib/axios"
 
 import {
   Sidebar,
@@ -25,54 +28,116 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-// Sample user data - replace with actual user data
-const user = {
-  name: "Super Admin",
-  email: "admin@example.com",
-  avatar: "/placeholder.svg?height=32&width=32",
+// User interface type
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
 }
 
-// Navigation data
-const data = {
-  adminManagement: [
-    {
-      title: "Approve/Reject Admins",
-      url: "/dashboard/super-admin/admin",
-      icon: CheckCircle,
-    },
-    {
-      title: "Add Admin",
-      url: "/dashboard/super-admin/admin/add",
-      icon: UserPlus,
-    },
-  ],
-  eventManagement: [
-    {
-      title: "View Events",
-      url: "/dashboard/super-admin/events",
-      icon: Calendar,
-    },
-    {
-      title: "Add Event",
-      url: "/dashboard/super-admin/events/add",
-      icon: Plus,
-    },
-  ],
-  bookings: [
-    {
-      title: "Manage Bookings",
-      url: "/dashboard/super-admin/bookings",
-      icon: BookOpen,
-    },
-  ],
-}
+// Icon mapping for dynamic navigation
+const iconMap: Record<string, React.ElementType> = {
+  CheckCircle,
+  UserPlus,
+  Calendar,
+  Plus,
+  BookOpen,
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [navData, setNavData] = useState<any>(null);
+  const [navError, setNavError] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+          setLoading(false);
+        } else {
+          const token = localStorage.getItem('token');
+          if (!token) {
+            router.push('/login');
+            return;
+          }
+          const response = await api.get('/api/auth/profile');
+          const userData = response.data;
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+          setLoading(false);
+        }
+      } catch (error: any) {
+        console.error('Error fetching user data:', error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          router.push('/login');
+        }
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, [router]);
+
+  useEffect(() => {
+    const fetchNav = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+        const res = await api.get('http://localhost:5000/api/admins/navigation', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.status === 200) setNavData(res.data);
+        else {
+          setNavError('Failed to load navigation: ' + res.status);
+          console.error('Navigation fetch error:', res);
+        }
+      } catch (e: any) {
+        setNavError('Failed to load navigation: ' + (e?.message || 'Unknown error'));
+        console.error('Failed to fetch navigation', e);
+      }
+    };
+    if (user) fetchNav();
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      console.log('Sidebar user:', user);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (navData) {
+      console.log('Sidebar navData:', navData);
+    }
+  }, [navData]);
+
   const handleLogout = () => {
-    // Implement logout logic here
-    console.log("Logging out...")
-    // Example: redirect to login page
-    // window.location.href = "/login"
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    router.push('/login');
+  };
+
+  if (loading || !user) {
+    return (
+      <Sidebar variant="inset" {...props}>
+        <SidebarHeader>
+          <div className="flex items-center justify-center p-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-700"></div>
+          </div>
+        </SidebarHeader>
+      </Sidebar>
+    );
+  }
+
+  if (!navData) {
+    return null;
   }
 
   return (
@@ -86,7 +151,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Users className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold text-gray-700">Super Admin</span>
+                  <span className="truncate font-semibold text-gray-700">
+                    {user.role === 'super-admin' ? 'Super Admin' : 
+                     user.role === 'admin' ? 'Admin' : 'User'} Dashboard
+                  </span>
                   <span className="truncate text-xs text-gray-500">Dashboard</span>
                 </div>
               </a>
@@ -96,59 +164,83 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-700">Manage Admins</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.adminManagement.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url} className="text-gray-600 hover:text-gray-700">
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {navData.adminManagement && navData.adminManagement.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-gray-700">Manage Admins</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navData.adminManagement.map((item: any) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url} className="text-gray-600 hover:text-gray-700">
+                        {iconMap[item.icon] && React.createElement(iconMap[item.icon])}
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-700">Manage Events</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.eventManagement.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url} className="text-gray-600 hover:text-gray-700">
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {navData.eventManagement && navData.eventManagement.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-gray-700">Manage Events</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navData.eventManagement.map((item: any) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url} className="text-gray-600 hover:text-gray-700">
+                        {iconMap[item.icon] && React.createElement(iconMap[item.icon])}
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-gray-700">Bookings</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {data.bookings.map((item) => (
-                <SidebarMenuItem key={item.title}>
+        {navData.bookings && navData.bookings.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-gray-700">Bookings</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {navData.bookings.map((item: any) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <a href={item.url} className="text-gray-600 hover:text-gray-700">
+                        {iconMap[item.icon] && React.createElement(iconMap[item.icon])}
+                        <span>{item.title}</span>
+                      </a>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
+        {user.role === 'super-admin' && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-gray-700">Profile</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <a href={item.url} className="text-gray-600 hover:text-gray-700">
-                      <item.icon />
-                      <span>{item.title}</span>
+                    <a href="/dashboard/super-admin/profile" className="text-gray-600 hover:text-gray-700">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter>
@@ -160,10 +252,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                     <AvatarFallback className="rounded-lg bg-gray-700 text-white">
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {(typeof user.name === "string" && user.name.trim()
+                        ? user.name.split(" ").map((n) => n[0]).join("")
+                        : "U")}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">

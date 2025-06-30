@@ -36,7 +36,7 @@ export default function BookingModal({ event, onClose, onBookingComplete }: Book
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventId: event.id,
-          seatsBooked,
+          seatCount: seatsBooked,
         }),
       })
 

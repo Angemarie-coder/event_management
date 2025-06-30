@@ -5,20 +5,35 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Check, X, Calendar, DollarSign } from "lucide-react"
-import type { Booking } from "@/lib/db"
+import { Check, X, Calendar, User, Mail, Clock } from "lucide-react"
+import { toast } from "sonner"
 
-interface ExtendedBooking extends Booking {
-  event_title: string
-  event_date: string
-  first_name: string
-  last_name: string
-  email: string
+interface Booking {
+  id: number
+  seatCount: number
+  status: 'pending' | 'approved' | 'rejected'
+  createdAt: string
+  guestName?: string
+  guestEmail?: string
+  user?: {
+    id: number
+    name: string
+    email: string
+  }
+  event: {
+    id: number
+    title: string
+    date: string
+    location: string
+    availableSeats: number
+    totalSeats: number
+  }
 }
 
 export default function BookingManagement() {
-  const [bookings, setBookings] = useState<ExtendedBooking[]>([])
+  const [bookings, setBookings] = useState<Booking[]>([])
   const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState<number | null>(null)
 
   useEffect(() => {
     fetchBookings()
@@ -26,15 +41,77 @@ export default function BookingManagement() {
 
   const fetchBookings = async () => {
     try {
-      const response = await fetch("/api/bookings")
+      const token = localStorage.getItem('token')
+      const response = await fetch("http://localhost:5000/api/bookings/pending", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
       if (response.ok) {
         const data = await response.json()
         setBookings(data)
+      } else {
+        console.error("Failed to fetch bookings:", response.statusText)
       }
     } catch (error) {
       console.error("Error fetching bookings:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleApprove = async (bookingId: number) => {
+    setActionLoading(bookingId)
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/approve`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.ok) {
+        toast.success("Booking approved successfully!")
+        fetchBookings() // Refresh the list
+      } else {
+        const error = await response.json()
+        toast.error(error.message || "Failed to approve booking")
+      }
+    } catch (error) {
+      console.error("Error approving booking:", error)
+      toast.error("Failed to approve booking")
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const handleReject = async (bookingId: number) => {
+    setActionLoading(bookingId)
+    try {
+      const token = localStorage.getItem('token')
+      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}/reject`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.ok) {
+        toast.success("Booking rejected successfully!")
+        fetchBookings() // Refresh the list
+      } else {
+        const error = await response.json()
+        toast.error(error.message || "Failed to reject booking")
+      }
+    } catch (error) {
+      console.error("Error rejecting booking:", error)
+      toast.error("Failed to reject booking")
+    } finally {
+      setActionLoading(null)
     }
   }
 
@@ -51,6 +128,22 @@ export default function BookingManagement() {
     }
   }
 
+  const getAttendeeInfo = (booking: Booking) => {
+    if (booking.user) {
+      return {
+        name: booking.user.name,
+        email: booking.user.email,
+        type: 'Registered User'
+      }
+    } else {
+      return {
+        name: booking.guestName || 'Unknown',
+        email: booking.guestEmail || 'No email',
+        type: 'Guest'
+      }
+    }
+  }
+
   if (loading) {
     return (
       <Card>
@@ -64,77 +157,106 @@ export default function BookingManagement() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Booking Management</CardTitle>
-        <CardDescription>Manage all event bookings and approvals</CardDescription>
+        <CardTitle>Pending Booking Requests</CardTitle>
+        <CardDescription>Review and approve/reject booking requests from attendees</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Customer</TableHead>
+                <TableHead>Attendee</TableHead>
                 <TableHead>Event</TableHead>
                 <TableHead>Seats</TableHead>
-                <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Requested</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {bookings.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    No bookings found
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    No pending booking requests
                   </TableCell>
                 </TableRow>
               ) : (
-                bookings.map((booking) => (
-                  <TableRow key={booking.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">
-                          {booking.first_name} {booking.last_name}
+                bookings.map((booking) => {
+                  const attendee = getAttendeeInfo(booking)
+                  return (
+                    <TableRow key={booking.id}>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium flex items-center">
+                            <User className="h-4 w-4 mr-2" />
+                            {attendee.name}
+                          </div>
+                          <div className="text-sm text-muted-foreground flex items-center">
+                            <Mail className="h-3 w-3 mr-1" />
+                            {attendee.email}
+                          </div>
+                          <div className="text-xs text-blue-600">{attendee.type}</div>
                         </div>
-                        <div className="text-sm text-muted-foreground">{booking.email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{booking.event_title}</div>
-                        <div className="text-sm text-muted-foreground flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {new Date(booking.event_date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{booking.event.title}</div>
+                          <div className="text-sm text-muted-foreground flex items-center">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            {new Date(booking.event.date).toLocaleDateString()}
+                          </div>
+                          <div className="text-xs text-gray-500">{booking.event.location}</div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{booking.seats_booked}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <DollarSign className="h-4 w-4 mr-1" />
-                        {booking.total_amount}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(booking.status)}>{booking.status.toUpperCase()}</Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(booking.booking_date).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {booking.status === "pending" && (
-                        <div className="flex justify-end space-x-2">
-                          <Button size="sm" variant="outline" className="text-green-600">
-                            <Check className="h-4 w-4" />
-                          </Button>
-                          <Button size="sm" variant="outline" className="text-red-600">
-                            <X className="h-4 w-4" />
-                          </Button>
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{booking.seatCount}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {booking.event.availableSeats} seats remaining
                         </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(booking.status)}>
+                          {booking.status.toUpperCase()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground flex items-center">
+                        <Clock className="h-3 w-3 mr-1" />
+                        {new Date(booking.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {booking.status === "pending" && (
+                          <div className="flex justify-end space-x-2">
+                            <Button 
+                              size="sm" 
+                              onClick={() => handleApprove(booking.id)}
+                              disabled={actionLoading === booking.id}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              {actionLoading === booking.id ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              ) : (
+                                <Check className="h-4 w-4" />
+                              )}
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={() => handleReject(booking.id)}
+                              disabled={actionLoading === booking.id}
+                              className="text-red-600 border-red-300 hover:bg-red-50"
+                            >
+                              {actionLoading === booking.id ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
+                              ) : (
+                                <X className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
               )}
             </TableBody>
           </Table>

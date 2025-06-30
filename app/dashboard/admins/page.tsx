@@ -1,9 +1,5 @@
-import AdminLayout from "./layout"
+import AdminDashboard from "./admin-dashboard"
 
 export default function AdminPage() {
-  return (
-    <AdminLayout>
-      <div>Admin Dashboard Content</div>
-    </AdminLayout>
-  )
+  return <AdminDashboard />
 }

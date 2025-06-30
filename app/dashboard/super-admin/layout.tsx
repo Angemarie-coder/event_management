@@ -1,15 +1,37 @@
-import type React from "react"
+"use client"
+
+import React, { useState } from "react"
 import { AppSidebar } from "@/components/dashboard/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
+import { Menu } from "lucide-react"
 
 export default function SuperAdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const [open, setOpen] = useState(false)
   return (
     <SidebarProvider>
-      <AppSidebar />
+      {/* Hamburger for mobile */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <button className="p-2 rounded-md bg-white shadow" aria-label="Open sidebar">
+              <Menu className="h-6 w-6 text-gray-700" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64 max-w-full">
+            <SheetTitle className="sr-only">Sidebar Navigation</SheetTitle>
+            <AppSidebar />
+          </SheetContent>
+        </Sheet>
+      </div>
+      {/* Sidebar always visible on desktop */}
+      <div className="hidden lg:block">
+        <AppSidebar />
+      </div>
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   )

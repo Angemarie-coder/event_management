@@ -73,9 +73,13 @@ export default function AdminManagement() {
       setAdmins(data)
     } catch (error) {
       console.error("Fetch error:", error)
+      let errorMessage = "Failed to fetch admin registrations"
+      if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage
+      }
       toast({
         title: "Error",
-        description: "Failed to fetch admin registrations",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -151,9 +155,13 @@ export default function AdminManagement() {
       })
     } catch (error) {
       console.error("Reject error:", error)
+      let errorMessage = "Failed to reject admin registration"
+      if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage
+      }
       toast({
         title: "Error",
-        description: `Failed to reject admin registration: ${error.message}`,
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -230,9 +238,13 @@ export default function AdminManagement() {
       })
     } catch (error) {
       console.error("Approve error:", error)
+      let errorMessage = "Failed to approve admin registration"
+      if (typeof error === "object" && error !== null && "message" in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage
+      }
       toast({
         title: "Error",
-        description: `Failed to approve admin registration: ${error.message}`,
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -300,10 +312,6 @@ export default function AdminManagement() {
           <h1 className="text-3xl font-bold">Admin Registrations</h1>
           <p className="text-muted-foreground">Review and manage admin registration requests</p>
         </div>
-        <Button onClick={fetchAdmins} disabled={loading} className="bg-pink-700 text-white">
-          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
       </div>
 
       {/* Stats Cards */}
