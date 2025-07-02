@@ -75,7 +75,7 @@ export default function EventCard({ event, isLandingPage = false }: EventCardPro
 
       {isLandingPage ? (
         <Link href={`/book/${event.id}`}>
-          <Button className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white">
+          <Button className="w-full bg-gray-700 hover:bg-gray-800 text-white">
             Book Tickets
           </Button>
         </Link>
@@ -83,7 +83,7 @@ export default function EventCard({ event, isLandingPage = false }: EventCardPro
         <Button 
           onClick={handleBook} 
           disabled={bookingLoading} 
-          className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white"
+          className="w-full bg-gray-700 hover:bg-gray-800 text-white"
         >
           {bookingLoading ? "Booking..." : "Book Now"}
         </Button>

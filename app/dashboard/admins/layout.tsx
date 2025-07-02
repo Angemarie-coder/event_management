@@ -29,7 +29,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <AppSidebar />
       </div>
       <div className="pt-16 lg:pl-64">
-        <main className="p-6">
+        <main className="p-0">
           {children}
         </main>
       </div>

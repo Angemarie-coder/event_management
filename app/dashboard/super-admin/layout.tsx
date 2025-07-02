@@ -32,7 +32,11 @@ export default function SuperAdminLayout({
       <div className="hidden lg:block">
         <AppSidebar />
       </div>
-      <SidebarInset>{children}</SidebarInset>
+      <div className="pt-16 lg:pl-64">
+        <main className="w-full h-full px-6 py-8">
+          {children}
+        </main>
+      </div>
     </SidebarProvider>
   )
 }

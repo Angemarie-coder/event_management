@@ -305,7 +305,7 @@ export default function AdminManagement() {
   // rejectedCount is now from state
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="px-6 py-8 space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -355,118 +355,70 @@ export default function AdminManagement() {
       </div>
 
       {/* Admin List */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <CardTitle>Admin Registration Requests</CardTitle>
-            <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                placeholder="Search by name or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {loading ? (
+          <div className="text-center py-8 text-gray-400 col-span-full">Loading admin registrations...</div>
+        ) : filteredAdmins.length === 0 ? (
+          <div className="text-center py-8 text-gray-400 col-span-full">
+            {searchTerm ? "No admins found matching your search." : "No admin registrations found."}
           </div>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <RefreshCw className="h-6 w-6 animate-spin mr-2" />
-              <span>Loading admin registrations...</span>
-            </div>
-          ) : filteredAdmins.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              {searchTerm ? "No admins found matching your search." : "No admin registrations found."}
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Admin Details</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Registered</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAdmins.map((admin) => (
-                  <TableRow key={admin.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src="/placeholder.svg" />
-                          <AvatarFallback>
-                            {admin.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")
-                              .toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium">{admin.name}</div>
-                          <div className="text-sm text-muted-foreground">{admin.email}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <div>{admin.email}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="capitalize">
-                        {admin.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{formatDate(admin.createdAt)}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(admin.isApproved)} variant="outline">
-                        {getStatusText(admin.isApproved)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {!admin.isApproved ? (
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRejectAdmin(admin.id)}
-                            disabled={actionLoading === admin.id}
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
-                          >
-                            <X className="h-4 w-4 mr-1" />
-                            Reject
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={() => handleAcceptAdmin(admin.id)}
-                            disabled={actionLoading === admin.id}
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                          >
-                            {actionLoading === admin.id ? (
-                              <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
-                            ) : (
-                              <Check className="h-4 w-4 mr-1" />
-                            )}
-                            Accept
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="text-sm text-green-600 font-medium">✓ Approved</div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+        ) : (
+          filteredAdmins.map((admin) => (
+            <Card key={admin.id} className="bg-white shadow-md rounded-xl">
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-gray-700">{admin.name}</CardTitle>
+                  <Badge className={getStatusColor(admin.isApproved)}>
+                    {getStatusText(admin.isApproved)}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-4 mb-4">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={"/placeholder.svg"} alt={admin.name} />
+                      <AvatarFallback>{admin.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">
+                      <strong>{admin.email}</strong>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <span className="text-sm">Role: {admin.role}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <span className="text-sm">Registered: {formatDate(admin.createdAt)}</span>
+                  </div>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  {admin.isApproved ? (
+                    <span className="text-green-600 font-medium">✓ Approved</span>
+                  ) : (
+                    <>
+                      <Button
+                        variant="outline"
+                        className="bg-white text-red-600 border-red-300 hover:bg-red-50"
+                        disabled={actionLoading === admin.id}
+                        onClick={() => handleRejectAdmin(admin.id)}
+                      >
+                        <X className="h-4 w-4 mr-1" /> Reject
+                      </Button>
+                      <Button
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        disabled={actionLoading === admin.id}
+                        onClick={() => handleAcceptAdmin(admin.id)}
+                      >
+                        <Check className="h-4 w-4 mr-1" /> Accept
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
     </div>
   )
 }

@@ -67,132 +67,126 @@ export default function AddEventPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md mx-auto">
-          <CardContent className="pt-6">
-            <div className="text-center space-y-4">
-              <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
-              <div>
-                <h3 className="text-lg font-semibold">Event Created Successfully!</h3>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Your event has been created and is now available for bookings.
-                </p>
-              </div>
+      <div className="py-8 bg-[#f4f4fa]">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
+          <p className="text-gray-600">Event created successfully!</p>
+        </div>
+        <div className="bg-white shadow-md rounded-xl p-8">
+          <div className="text-center space-y-4">
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
+            <div>
+              <h3 className="text-lg font-semibold">Event Created Successfully!</h3>
+              <p className="text-sm text-muted-foreground mt-2">
+                Your event has been created and is now available for bookings.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <Card className="w-full max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>Add New Event</CardTitle>
-          <CardDescription>
-            Create a new event that users can book tickets for.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="title">Event Title</Label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                disabled={loading}
-                placeholder="Enter event title"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                disabled={loading}
-                placeholder="Enter event description"
-                rows={4}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="date">Event Date</Label>
-                <Input
-                  id="date"
-                  name="date"
-                  type="datetime-local"
-                  value={formData.date}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="totalSeats">Total Seats</Label>
-                <Input
-                  id="totalSeats"
-                  name="totalSeats"
-                  type="number"
-                  min="1"
-                  value={formData.totalSeats}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  placeholder="Enter total seats"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-                disabled={loading}
-                placeholder="Enter event location"
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <Button
-                type="submit"
-                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white"
-                disabled={loading}
-              >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Event
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.push('/dashboard/admins')}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="min-h-[80vh] flex justify-center items-center bg-[#f4f4fa] py-8">
+      <form onSubmit={handleSubmit} className="w-full max-w-lg bg-white rounded-2xl shadow-lg p-10 space-y-6">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Event</h1>
+          <p className="text-gray-600">Fill in the details below to create a new event.</p>
+        </div>
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        <div className="space-y-2">
+          <Label htmlFor="title">Event Title</Label>
+          <Input
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            disabled={loading}
+            placeholder="Enter event title"
+            className="w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            required
+            disabled={loading}
+            placeholder="Enter event description"
+            rows={4}
+            className="w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="date">Event Date</Label>
+          <Input
+            id="date"
+            name="date"
+            type="datetime-local"
+            value={formData.date}
+            onChange={handleChange}
+            required
+            disabled={loading}
+            className="w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="totalSeats">Total Seats</Label>
+          <Input
+            id="totalSeats"
+            name="totalSeats"
+            type="number"
+            min="1"
+            value={formData.totalSeats}
+            onChange={handleChange}
+            required
+            disabled={loading}
+            placeholder="Enter total seats"
+            className="w-full"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="location">Location</Label>
+          <Input
+            id="location"
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            required
+            disabled={loading}
+            placeholder="Enter event location"
+            className="w-full"
+          />
+        </div>
+        <div className="flex gap-4">
+          <Button
+            type="submit"
+            className="flex-1 bg-gray-700 hover:bg-gray-800 text-white h-12 text-lg font-semibold rounded-lg"
+            disabled={loading}
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Create Event
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push('/dashboard/admins')}
+            disabled={loading}
+            className="flex-1 h-12 text-lg font-semibold rounded-lg"
+          >
+            Cancel
+          </Button>
+        </div>
+      </form>
     </div>
   );
 } 

@@ -124,7 +124,7 @@ export default function LoginForm() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white px-8 py-4 text-lg rounded-full"
+          <Button type="submit" className="w-full bg-gray-700 hover:bg-gray-800 text-white px-8 py-4 text-lg rounded-full"
                disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Sign In

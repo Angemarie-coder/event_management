@@ -98,7 +98,7 @@ export default function HomePage() {
           <h2 className="text-5xl md:text-7xl font-bold leading-tight">
             MANAGE EVENTS
             <br />
-            <span className="bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 bg-clip-text text-transparent">
+            <span>
               WITH EASE
             </span>
           </h2>
@@ -440,7 +440,7 @@ export default function HomePage() {
                   placeholder="Enter your email"
                   className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
                 />
-                <Button className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white">
+                <Button className="w-full bg-gray-700 hover:bg-gray-800 text-white">
                   Subscribe
                 </Button>
               </div>
@@ -484,7 +484,7 @@ export default function HomePage() {
 
 
       {/* Scroll to top button*/}
-      <button className="fixed bottom-8 right-8 p-3 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 rounded-full transition-colors z-20">
+      <button className="fixed bottom-8 right-8 p-3 bg-gray-700 hover:bg-gray-800 rounded-full transition-colors z-20">
         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
         </svg>

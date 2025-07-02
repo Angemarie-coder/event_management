@@ -12,6 +12,7 @@ interface User {
   name: string;
   role: string;
   isApproved: boolean;
+  avatar?: string;
 }
 
 export default function DashboardPage() {

@@ -16,6 +16,7 @@ interface User {
   isApproved: boolean;
   isVerified: boolean;
   createdAt: string;
+  avatar?: string;
 }
 
 export default function AdminUsersPage() {

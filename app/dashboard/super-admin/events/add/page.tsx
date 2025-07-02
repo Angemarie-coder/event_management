@@ -39,11 +39,14 @@ export default function AddEventPage() {
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-white p-8 rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Add Event</h1>
-      {error && <div className="text-red-600 mb-4">{error}</div>}
-      {success && <div className="text-green-600 mb-4">{success}</div>}
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="w-full h-full flex justify-center items-center bg-[#f4f4fa]">
+      <form onSubmit={handleSubmit} className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-10 space-y-6">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Add Event</h1>
+          <p className="text-gray-600">Fill in the details below to create a new event.</p>
+        </div>
+        {error && <div className="text-red-600 mb-4">{error}</div>}
+        {success && <div className="text-green-600 mb-4">{success}</div>}
         <div>
           <Label htmlFor="title">Title</Label>
           <Input id="title" name="title" value={form.title} onChange={handleChange} required disabled={loading} />

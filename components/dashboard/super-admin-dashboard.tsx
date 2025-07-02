@@ -63,10 +63,9 @@ export default function SuperAdminDashboard({ user }: SuperAdminDashboardProps) 
   }
 
   return (
-    <div>
+    <div className="w-full h-full bg-[#f4f4fa]">
       <DashboardHeader user={user} />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="w-full h-full px-6 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Welcome back, {user.first_name}!</h1>

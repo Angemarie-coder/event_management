@@ -34,7 +34,7 @@ export default function BookingForm({ eventId }: { eventId: number }) {
       />
       <button
         onClick={handleBooking}
-        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg w-full transition"
+        className="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-lg w-full transition"
       >
         Book Ticket
       </button>

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Calendar, LogOut, User } from "lucide-react"
 import type { User as UserType } from "@/lib/db"
@@ -36,33 +36,36 @@ export default function DashboardHeader({ user }: DashboardHeaderProps) {
   }
 
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="bg-white shadow-md border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
-            <Calendar className="h-8 w-8 text-blue-600" />
+            <Calendar className="h-8 w-8 text-[#3d3269]" />
             <div className="ml-3">
-              <h1 className="text-xl font-semibold text-gray-900">Event Manager</h1>
+              <h1 className="text-xl font-semibold text-[#3d3269]">Event Manager</h1>
               <p className="text-sm text-gray-500">{getRoleDisplay(user.role)} Dashboard</p>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">
-                {user.first_name} {user.last_name}
-              </p>
-              <p className="text-xs text-gray-500">{user.email}</p>
+            <div className="flex items-center space-x-2">
+              <Avatar className="h-10 w-10 border-2 border-[#3d3269]" />
+              <span className="font-semibold text-[#3d3269] text-sm hidden sm:inline">{user.first_name} {user.last_name}</span>
             </div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <span className="sr-only">Open user menu</span>
                   <Avatar className="h-10 w-10">
-                    <AvatarFallback>
-                      {user.first_name[0]}
-                      {user.last_name[0]}
-                    </AvatarFallback>
+                    {user.avatar ? (
+                      <AvatarImage src={user.avatar} alt={user.first_name + ' ' + user.last_name} />
+                    ) : (
+                      <AvatarFallback>
+                        {user.first_name[0]}
+                        {user.last_name[0]}
+                      </AvatarFallback>
+                    )}
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>

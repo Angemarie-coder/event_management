@@ -84,16 +84,16 @@ export default function SuperAdminProfilePage() {
   }
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-[40vh] text-gray-400">Loading profile...</div>
+    return <div className="flex justify-center items-center min-h-[40vh] bg-[#f4f4fa] text-gray-400">Loading profile...</div>
   }
 
   if (!profile) {
-    return <div className="flex justify-center items-center min-h-[40vh] text-red-400">Failed to load profile.</div>
+    return <div className="flex justify-center items-center min-h-[40vh] bg-[#f4f4fa] text-red-400">Failed to load profile.</div>
   }
 
   return (
-    <div className="max-w-xl mx-auto py-10">
-      <Card className="shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-[#f4f4fa] p-2">
+      <Card className="shadow-xl rounded-xl w-full max-w-xl mx-auto">
         <CardHeader className="flex flex-col items-center gap-2">
           <Avatar className="h-20 w-20 mb-2">
             <AvatarImage src={form.avatar || "/placeholder-user.jpg"} alt={form.name || profile.name} />
