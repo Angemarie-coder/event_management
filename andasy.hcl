@@ -6,7 +6,9 @@ app_name = "eventmanagement"
 
 app {
 
-  env = {}
+  env = {
+    HOST = "::"
+  }
 
   port = 3000
 
